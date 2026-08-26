@@ -1,0 +1,4 @@
+enabled: true
+image:
+  repository: your-registry/user-frontend
+  tag: latest

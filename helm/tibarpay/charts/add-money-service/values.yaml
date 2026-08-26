@@ -1,0 +1,4 @@
+enabled: true
+image:
+  repository: your-registry/add-money-service
+  tag: latest

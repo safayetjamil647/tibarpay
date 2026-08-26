@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-proxy-config
+data:
+  nginx.conf: "worker_processes auto;\n\nevents {\n    worker_connections 1024;\n\
+    }\n\nhttp {\n    include mime.types;\n    default_type application/octet-stream;\n\
+    \    sendfile on;\n    keepalive_timeout 65;\n\n    # Define User Frontend service\n\
+    \    upstream user_frontend {\n        server user-frontend:3000;\n    }\n\n \
+    \   # Define Admin Frontend service\n    upstream admin_frontend {\n        server\
+    \ admin-frontend:3000;\n    }\n\n    # Define API Gateway service\n    upstream\
+    \ api_gateway {\n        server api-gateway:80;\n    }\n\n    server {\n     \
+    \   listen 80;\n        server_name localhost;\n\n        # Route all /api/ requests\
+    \ to API Gateway\n        location /api/ {\n            proxy_pass http://api_gateway;\n\
+    \            proxy_set_header Host $host;\n            proxy_set_header X-Real-IP\
+    \ $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+    \            proxy_set_header X-Forwarded-Proto $scheme;\n        }\n\n      \
+    \  # Route admin frontend requests\n        location ^~ /admin {\n           \
+    \ proxy_pass http://admin_frontend;\n            proxy_set_header Host $host;\n\
+    \            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header\
+    \ X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto\
+    \ $scheme;\n            proxy_set_header Upgrade $http_upgrade;\n            proxy_set_header\
+    \ Connection \"upgrade\";\n        }\n\n        # Route admin frontend assets\
+    \ (using custom appDir 'admin_app')\n        location /admin_app/ {\n        \
+    \    proxy_pass http://admin_frontend;\n            proxy_set_header Host $host;\n\
+    \            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header\
+    \ X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto\
+    \ $scheme;\n        }\n\n        # Route all other requests to the user frontend\n\
+    \        location / {\n            proxy_pass http://user_frontend;\n        \
+    \    proxy_set_header Host $host;\n            proxy_set_header X-Real-IP $remote_addr;\n\
+    \            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n  \
+    \          proxy_set_header X-Forwarded-Proto $scheme;\n            \n       \
+    \     # WebSocket support for Vite/SvelteKit if needed\n            proxy_set_header\
+    \ Upgrade $http_upgrade;\n            proxy_set_header Connection \"upgrade\"\
+    ;\n        }\n    }\n}\n"

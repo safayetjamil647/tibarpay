@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apisix-config
+data:
+  config.yaml: |
+    deployment:
+      role: data_plane
+      role_data_plane:
+        config_provider: yaml
+    apisix:
+      node_listen: 9080
+      enable_ipv6: false
+  apisix.yaml: |
+    routes:
+      - id: 1
+        uri: /api/market/*
+        upstream:
+          nodes:
+            "market-service:8001": 1
+          type: roundrobin
+      - id: 2
+        uri: /api/aml/*
+        upstream:
+          nodes:
+            "aml-service:8002": 1
+          type: roundrobin
+      - id: 4
+        uri: /api/add-money/*
+        upstream:
+          nodes:
+            "add-money-service:8003": 1
+          type: roundrobin
+      - id: 5
+        uri: /api/transfer-money/*
+        upstream:
+          nodes:
+            "transfer-money-service:8004": 1
+          type: roundrobin
+      - id: 3
+        uri: /api/*
+        upstream:
+          nodes:
+            "user-service:8000": 1
+          type: roundrobin
+    #END

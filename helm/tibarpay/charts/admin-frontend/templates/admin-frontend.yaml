@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-frontend
+  template:
+    metadata:
+      labels:
+        app: admin-frontend
+    spec:
+      containers:
+      - name: admin-frontend
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: '3000'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-frontend
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: admin-frontend

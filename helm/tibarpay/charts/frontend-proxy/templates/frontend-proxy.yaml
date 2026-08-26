@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-proxy
+  template:
+    metadata:
+      labels:
+        app: frontend-proxy
+    spec:
+      containers:
+      - name: frontend-proxy
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: frontend-proxy-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+          readOnly: true
+      volumes:
+      - name: frontend-proxy-config
+        configMap:
+          name: frontend-proxy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-proxy
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: frontend-proxy

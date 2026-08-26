@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-scripts
+data:
+  init-aml-db.sql: 'CREATE DATABASE aml_db;
+
+    '
+  init-finance-db.sql: 'CREATE DATABASE finance_db;
+
+    '
+  init-market-db.sql: 'CREATE DATABASE market_db;
+
+    '

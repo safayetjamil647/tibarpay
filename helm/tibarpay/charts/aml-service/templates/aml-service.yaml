@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aml-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aml-service
+  template:
+    metadata:
+      labels:
+        app: aml-service
+    spec:
+      containers:
+      - name: aml-service
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        ports:
+        - containerPort: 8002
+        env:
+        - name: ENV
+          value: dev
+        - name: DATABASE_URL
+          value: postgresql://postgres:postgres@postgres:5432/tibarpay
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aml-service
+spec:
+  ports:
+  - port: 8002
+    targetPort: 8002
+  selector:
+    app: aml-service

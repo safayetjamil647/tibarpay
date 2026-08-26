@@ -1,0 +1,4 @@
+enabled: true
+image:
+  repository: your-registry/transfer-money-service
+  tag: latest

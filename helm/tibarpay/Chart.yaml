@@ -1,0 +1,49 @@
+apiVersion: v2
+name: tibarpay
+description: A Helm chart for Tibarpay microservices
+version: 0.1.0
+dependencies:
+- name: postgres
+  version: 0.1.0
+  repository: file://./charts/postgres
+  condition: postgres.enabled
+- name: apisix
+  version: 0.1.0
+  repository: file://./charts/apisix
+  condition: apisix.enabled
+- name: api-gateway
+  version: 0.1.0
+  repository: file://./charts/api-gateway
+  condition: api-gateway.enabled
+- name: frontend-proxy
+  version: 0.1.0
+  repository: file://./charts/frontend-proxy
+  condition: frontend-proxy.enabled
+- name: user-service
+  version: 0.1.0
+  repository: file://./charts/user-service
+  condition: user-service.enabled
+- name: market-service
+  version: 0.1.0
+  repository: file://./charts/market-service
+  condition: market-service.enabled
+- name: aml-service
+  version: 0.1.0
+  repository: file://./charts/aml-service
+  condition: aml-service.enabled
+- name: add-money-service
+  version: 0.1.0
+  repository: file://./charts/add-money-service
+  condition: add-money-service.enabled
+- name: transfer-money-service
+  version: 0.1.0
+  repository: file://./charts/transfer-money-service
+  condition: transfer-money-service.enabled
+- name: user-frontend
+  version: 0.1.0
+  repository: file://./charts/user-frontend
+  condition: user-frontend.enabled
+- name: admin-frontend
+  version: 0.1.0
+  repository: file://./charts/admin-frontend
+  condition: admin-frontend.enabled

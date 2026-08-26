@@ -1,0 +1,4 @@
+enabled: true
+image:
+  repository: apache/apisix
+  tag: latest

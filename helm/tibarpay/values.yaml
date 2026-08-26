@@ -1,0 +1,22 @@
+postgres:
+  enabled: true
+apisix:
+  enabled: true
+api-gateway:
+  enabled: true
+frontend-proxy:
+  enabled: true
+user-service:
+  enabled: true
+market-service:
+  enabled: true
+aml-service:
+  enabled: true
+add-money-service:
+  enabled: true
+transfer-money-service:
+  enabled: true
+user-frontend:
+  enabled: true
+admin-frontend:
+  enabled: true

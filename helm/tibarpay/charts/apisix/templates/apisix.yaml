@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apisix
+  template:
+    metadata:
+      labels:
+        app: apisix
+    spec:
+      containers:
+      - name: apisix
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: apisix-config
+          mountPath: /usr/local/apisix/conf/config.yaml
+          subPath: config.yaml
+          readOnly: true
+        - name: apisix-config
+          mountPath: /usr/local/apisix/conf/apisix.yaml
+          subPath: apisix.yaml
+          readOnly: true
+      volumes:
+      - name: apisix-config
+        configMap:
+          name: apisix-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apisix
+spec:
+  ports:
+  - port: 9080
+    targetPort: 9080
+  selector:
+    app: apisix

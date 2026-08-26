@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: add-money-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: add-money-service
+  template:
+    metadata:
+      labels:
+        app: add-money-service
+    spec:
+      containers:
+        - name: add-money-service
+          image: your-registry/add-money-service:latest
+          ports:
+            - containerPort: 8003
+          env:
+            - name: ENV
+              value: "dev"
+            - name: DATABASE_URL
+              value: "postgresql://postgres:postgres@postgres:5432/tibarpay"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: add-money-service
+spec:
+  ports:
+    - port: 8003
+      targetPort: 8003
+  selector:
+    app: add-money-service

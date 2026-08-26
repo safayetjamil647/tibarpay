@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - postgres-configmap.yaml
+  - postgres.yaml
+  - apisix-configmap.yaml
+  - apisix.yaml
+  - api-gateway-configmap.yaml
+  - api-gateway.yaml
+  - frontend-proxy-configmap.yaml
+  - frontend-proxy.yaml
+  - ingress.yaml
+  - user-service.yaml
+  - market-service.yaml
+  - aml-service.yaml
+  - add-money-service.yaml
+  - transfer-money-service.yaml
+  - user-frontend.yaml
+  - admin-frontend.yaml

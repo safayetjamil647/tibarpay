@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: ./user-service
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tibarpay
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+      - ./user-service:/app
+      
+  market-service:
+    build:
+      context: ./market-service
+    environment:
+      - ENV=dev
+    volumes:
+      - ./market-service:/app
+
+  aml-service:
+    build:
+      context: ./aml-service
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tibarpay
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+      - ./aml-service:/app
+
+  add-money-service:
+    build:
+      context: ./add-money-service
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tibarpay
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+      - ./add-money-service:/app
+
+  transfer-money-service:
+    build:
+      context: ./transfer-money-service
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tibarpay
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+      - ./transfer-money-service:/app
+
+  user-frontend:
+    build:
+      context: ./user-frontend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+  admin-frontend:
+    build:
+      context: ./admin-frontend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tibarpay
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+
+  apisix:
+    image: apache/apisix:latest
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./apisix_conf/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+    depends_on:
+      - user-service
+      - market-service
+      - aml-service
+      - add-money-service
+      - transfer-money-service
+
+  frontend-proxy:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-frontend
+      - admin-frontend
+      - api-gateway
+
+  api-gateway:
+    image: nginx:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ./api-gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - apisix
+
+volumes:
+  postgres_data:

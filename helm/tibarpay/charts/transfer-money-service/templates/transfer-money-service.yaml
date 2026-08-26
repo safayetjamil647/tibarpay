@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transfer-money-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transfer-money-service
+  template:
+    metadata:
+      labels:
+        app: transfer-money-service
+    spec:
+      containers:
+      - name: transfer-money-service
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}
+        ports:
+        - containerPort: 8004
+        env:
+        - name: ENV
+          value: dev
+        - name: DATABASE_URL
+          value: postgresql://postgres:postgres@postgres:5432/tibarpay
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transfer-money-service
+spec:
+  ports:
+  - port: 8004
+    targetPort: 8004
+  selector:
+    app: transfer-money-service
